@@ -1,7 +1,5 @@
 package rpis81.dudka.oop;
 
-import java.util.Arrays;
-
 public class Individual {
 
     static final int SIZE_DEFAULT = 16;
@@ -22,6 +20,7 @@ public class Individual {
         toFill(accounts);
     }
 
+    //Метод для заполнения списка счетов из источника
     private void toFill(Account[] sourceArray) {
         int i = 0;
         for (Account it : sourceArray) {
@@ -159,28 +158,35 @@ public class Individual {
         return -1;
     }
 
+    //Проверка, что если места нет)))
     private void checkQuantity(){
         if (size == this.accounts.length) {
             increaseArray();
         }
     }
 
+    //Метод, увеличивающий объем
     private void increaseArray() {
         Account[] tmp = this.accounts;
         this.accounts = new Account[size * 2];
         toFill(tmp);
     }
 
+    //Сдвиг всех элементов влево, с перемещением элемента по индексу в самый конец
     private void shiftValues(int index){
         int length = this.accounts.length - 1;
         if (length - index >= 0) System.arraycopy(this.accounts, index + 1, this.accounts, index, length - index);
         this.accounts[length] = null;
     }
 
-
+    //Для удобства))))
     public String toString() {
         final StringBuilder sb = new StringBuilder("Individual{");
-        sb.append("accounts=").append(Arrays.toString(accounts));
+        sb.append("accounts={");
+        for (Account it : getAccounts()) {
+            sb.append(it).append(", ");
+        }
+        sb.append("}");
         sb.append(", size=").append(size);
         sb.append('}');
         return sb.toString();

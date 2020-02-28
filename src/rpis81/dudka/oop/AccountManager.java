@@ -1,7 +1,5 @@
 package rpis81.dudka.oop;
 
-import java.util.Arrays;
-
 public class AccountManager {
 
     private Individual[] individuals;
@@ -156,7 +154,11 @@ public class AccountManager {
 
     public String toString() {
         final StringBuilder sb = new StringBuilder("AccountManager{");
-        sb.append("individuals=").append(Arrays.toString(individuals));
+        sb.append("individuals={");
+        for (Individual it : getIndividuals()) {
+            sb.append(it).append(", ");
+        }
+        sb.append("}");
         sb.append(", size=").append(size);
         sb.append('}');
         return sb.toString();
