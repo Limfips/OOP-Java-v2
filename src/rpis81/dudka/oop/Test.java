@@ -1,5 +1,9 @@
 package rpis81.dudka.oop;
 
+import rpis81.dudka.oop.model.Account;
+import rpis81.dudka.oop.model.AccountManager;
+import rpis81.dudka.oop.model.Individual;
+
 public class Test {
     public static void main(String[] args) {
         System.out.println("Я сделять!");

@@ -1,9 +1,9 @@
-package rpis81.dudka.oop;
+package rpis81.dudka.oop.model;
 
 public class Account {
 
-    static final String NUMBER_DEFAULT = "";
-    static final double BALANCE_DEFAULT = 0;
+    public static final String NUMBER_DEFAULT = "";
+    public static final double BALANCE_DEFAULT = 0;
     private String number;
     private double balance;
 

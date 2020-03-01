@@ -1,8 +1,8 @@
-package rpis81.dudka.oop;
+package rpis81.dudka.oop.model;
 
 public class Individual {
 
-    static final int SIZE_DEFAULT = 16;
+    public static final int SIZE_DEFAULT = 16;
 
     private Account[] accounts;
     private int size;
@@ -175,7 +175,9 @@ public class Individual {
     //Сдвиг всех элементов влево, с перемещением элемента по индексу в самый конец
     private void shiftValues(int index){
         int length = this.accounts.length - 1;
-        if (length - index >= 0) System.arraycopy(this.accounts, index + 1, this.accounts, index, length - index);
+        if (length - index >= 0) {
+            System.arraycopy(this.accounts, index + 1, this.accounts, index, length - index);
+        }
         this.accounts[length] = null;
     }
 

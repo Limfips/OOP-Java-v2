@@ -1,4 +1,4 @@
-package rpis81.dudka.oop;
+package rpis81.dudka.oop.model;
 
 public class AccountManager {
 
