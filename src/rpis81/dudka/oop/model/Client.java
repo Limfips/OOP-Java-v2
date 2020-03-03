@@ -16,4 +16,21 @@ public interface Client {
     int getIndex(String accountNumber);
     String getName();
     void setName(String name);
+    int getCreditScores();
+    void addCreditScores(int creditScores);
+    default ClientStatus getStatus() {
+        int creditScores = getCreditScores();
+        if (creditScores >= 5) {
+            return ClientStatus.PLATINUM;
+        } else if (creditScores >= 3) {
+            return ClientStatus.GOLD;
+        } else if (creditScores >= 0) {
+            return ClientStatus.GOOD;
+        } else if (creditScores >= -2) {
+            return ClientStatus.RISKY;
+        } else {
+            return ClientStatus.BAD;
+        }
+    }
+    Account[] getCreditAccounts();
 }

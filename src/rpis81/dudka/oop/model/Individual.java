@@ -3,10 +3,12 @@ package rpis81.dudka.oop.model;
 public class Individual implements Client {
 
     public static final int SIZE_DEFAULT = 16;
+    public static final int CREDIT_SCORES_DEFAULT = 0;
 
     private Account[] accounts;
     private String name;
     private int size;
+    private int creditScores;
 
     public Individual(String name) {
         this(name, SIZE_DEFAULT);
@@ -19,6 +21,7 @@ public class Individual implements Client {
     public Individual(String name, Account[] accounts) {
         this.name = name;
         this.accounts = new Account[accounts.length];
+        this.creditScores = CREDIT_SCORES_DEFAULT;
         toFill(accounts);
     }
 
@@ -159,6 +162,34 @@ public class Individual implements Client {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int getCreditScores() {
+        return creditScores;
+    }
+
+    @Override
+    public void addCreditScores(int creditScores) {
+        this.creditScores += creditScores;
+    }
+
+    @Override
+    public Account[] getCreditAccounts() {
+        Account[] credits = new Account[size];
+        int j = 0;
+        for (int i = 0; i < size; i++) {
+            if (this.accounts[i] != null && this.accounts[i] instanceof Credit) {
+                credits[j++] = this.accounts[i];
+            }
+        }
+        Account[] result = new Account[j];
+        for (int i = 0, k = 0; i < size; i++) {
+            if (credits[i] != null) {
+                result[k++] = credits[i];
+            }
+        }
+        return result;
     }
 
     public int getIndex(String accountNumber) {

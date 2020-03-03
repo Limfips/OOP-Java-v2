@@ -1,8 +1,6 @@
 package rpis81.dudka.oop.model;
 
-import org.junit.*;
-
-import java.util.Arrays;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -276,5 +274,74 @@ public class EntityTest {
         assertEquals(-1, entity.getIndex("sdsafsd"));
         assertEquals(0, entity.getIndex(firstTestAccounts[0].getNumber()));
         assertEquals(4, entity.getIndex(firstTestAccounts[4].getNumber()));
+    }
+
+    @Test
+    public void getCreditScores() {
+        Entity entity;
+
+        entity = getFirstConstructor();
+        assertEquals(entity.getCreditScores(), Entity.CREDIT_SCORES_DEFAULT);
+
+        entity = getSecondConstructor();
+        assertEquals(entity.getCreditScores(), Entity.CREDIT_SCORES_DEFAULT);
+    }
+
+    @Test
+    public void addCreditScores() {
+        Entity entity = new Entity("sad");
+        entity.addCreditScores(10);
+        assertEquals(entity.getCreditScores(), Individual.CREDIT_SCORES_DEFAULT + 10);
+    }
+
+    @Test
+    public void getCreditAccounts() {
+        Account[] accounts = new Account[10];
+        accounts[0] = new CreditAccount("CreditAccount_1", 812422, 12);
+        accounts[1] = firstTestAccounts[0];
+        accounts[2] = firstTestAccounts[1];
+        accounts[3] = new CreditAccount("CreditAccount_2", 345352, 9);
+        accounts[4] = firstTestAccounts[2];
+        accounts[5] = firstTestAccounts[3];
+        accounts[6] = new CreditAccount("CreditAccount_3", 345344, 11);
+        accounts[7] = firstTestAccounts[4];
+        accounts[8] = firstTestAccounts[5];
+        accounts[9] = new CreditAccount("CreditAccount_4", 732433, 7);
+        Entity entity = new Entity("asd", accounts);
+
+        assertEquals(entity.getCreditAccounts().length, 4);
+    }
+
+    @Test
+    public void getStatus() {
+        Entity entity = new Entity("sad");
+        assertEquals(entity.getStatus(), ClientStatus.GOOD);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.GOOD);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.GOOD);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.GOLD);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.GOLD);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.PLATINUM);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.PLATINUM);
+        entity.addCreditScores(1);
+        assertEquals(entity.getStatus(), ClientStatus.PLATINUM);
+
+        entity.addCreditScores(-8);
+        assertEquals(entity.getStatus(), ClientStatus.RISKY);
+        entity.addCreditScores(-1);
+        assertEquals(entity.getStatus(), ClientStatus.RISKY);
+        entity.addCreditScores(-1);
+        assertEquals(entity.getStatus(), ClientStatus.BAD);
+        entity.addCreditScores(-1);
+        assertEquals(entity.getStatus(), ClientStatus.BAD);
+        entity.addCreditScores(-1);
+        assertEquals(entity.getStatus(), ClientStatus.BAD);
+        entity.addCreditScores(-1);
+        assertEquals(entity.getStatus(), ClientStatus.BAD);
     }
 }

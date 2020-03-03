@@ -132,6 +132,32 @@ public class AccountManager {
         return null;
     }
 
+    public Client[] getClientsWithOneCredit() {
+        Client[] clients = new Client[size];
+        int k = 0;
+        for (Client it : getClients()) {
+            if (it.getCreditAccounts().length > 0) {
+                clients[k++] = it;
+            }
+        }
+        Client[] result = new Client[k];
+        System.arraycopy(clients, 0, result, 0, k);
+        return result;
+    }
+
+    public Client[] getBedClientsWithOneCredit() {
+        Client[] clients = new Client[size];
+        int k = 0;
+        for (Client it : getClients()) {
+            if (it.getCreditAccounts().length > 0 && it.getStatus().equals(ClientStatus.BAD)) {
+                clients[k++] = it;
+            }
+        }
+        Client[] result = new Client[k];
+        System.arraycopy(clients, 0, result, 0, k);
+        return result;
+    }
+
     private void checkQuantity(){
         if (size == this.clients.length) {
             increaseArray();

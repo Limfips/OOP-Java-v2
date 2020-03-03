@@ -2,14 +2,18 @@ package rpis81.dudka.oop.model;
 
 public class Entity implements Client {
 
+    public static final int CREDIT_SCORES_DEFAULT = 0;
+
     private Node head;
     private Node tail;
     private String name;
     private int size;
+    private int creditScores;
 
     public Entity(String name) {
         initHead();
         this.name = name;
+        this.creditScores = CREDIT_SCORES_DEFAULT;
     }
 
     public Entity(String name, Account[] accounts) {
@@ -147,6 +151,35 @@ public class Entity implements Client {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int getCreditScores() {
+        return creditScores;
+    }
+
+    @Override
+    public void addCreditScores(int creditScores) {
+        this.creditScores += creditScores;
+    }
+
+    @Override
+    public Account[] getCreditAccounts() {
+        Account[] credits = new Account[size];
+        Account[] accounts = getAccounts();
+        int j = 0;
+        for (int i = 0; i < size; i++) {
+            if (accounts[i] != null && accounts[i] instanceof Credit) {
+                credits[j++] = accounts[i];
+            }
+        }
+        Account[] result = new Account[j];
+        for (int i = 0, k = 0; i < size; i++) {
+            if (credits[i] != null) {
+                result[k++] = credits[i];
+            }
+        }
+        return result;
     }
 
     // По Заданию
