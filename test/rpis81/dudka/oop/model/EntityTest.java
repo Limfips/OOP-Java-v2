@@ -5,7 +5,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class EntityTest {
-
     private static final int testSize = 8;
     private final Account[] firstTestAccounts = getFirstTestAccounts();
     private final Account[] secondTestAccounts = getSecondTestAccounts();
@@ -45,7 +44,7 @@ public class EntityTest {
         accounts[7] = new DebitAccount("Account_16", 241321);
         return accounts;
     }
-    
+
     @Test
     public void add() {
         Entity entity;
