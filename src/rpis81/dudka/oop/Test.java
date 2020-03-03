@@ -1,13 +1,12 @@
 package rpis81.dudka.oop;
 
-import rpis81.dudka.oop.model.Account;
-import rpis81.dudka.oop.model.AccountManager;
-import rpis81.dudka.oop.model.Individual;
+import rpis81.dudka.oop.model.*;
 
 public class Test {
     public static void main(String[] args) {
         System.out.println("Я сделять!");
         lab1tests();
+        lab2tests();
     }
     private static void lab1tests() {
         //Тестирования класса Account ----------------------------------------------------------------------------------
@@ -25,44 +24,59 @@ public class Test {
         //--------------------------------------------------------------------------------------------------------------
     }
 
+    private static void lab2tests() {
+
+    }
+
     private static void FirstTestAccount() {
-        Account account = new Account();
+        long start = System.currentTimeMillis();
+        Account account = new DebitAccount();
         String oldNumberAccount = account.getNumber();
         double oldBalance = account.getBalance();
         String testNumberAccount = "142354534";
         double testBalance = 100000;
         account.setNumber(testNumberAccount);
         account.setBalance(testBalance);
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if ((account.getNumber().equals(testNumberAccount) &&
                 account.getBalance() == testBalance ) &&
-                (oldNumberAccount.equals(Account.NUMBER_DEFAULT) &&
-                        oldBalance == Account.BALANCE_DEFAULT)) {
-            System.out.println("COMPLETED: First constructor account test.");
+                (oldNumberAccount.equals(DebitAccount.NUMBER_DEFAULT) &&
+                        oldBalance == DebitAccount.BALANCE_DEFAULT)) {
+            result.append("COMPLETED: First constructor account test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: First constructor account test.");
         }
     }
 
     private static void SecondTestAccount() {
-        Account account = new Account("63643278492", 213);
+        long start = System.currentTimeMillis();
+        Account account = new DebitAccount("63643278492", 213);
         String oldNumberAccount = account.getNumber();
         double oldBalance = account.getBalance();
         String testNumberAccount = "142354534";
         double testBalance = 100000;
         account.setNumber(testNumberAccount);
         account.setBalance(testBalance);
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if ((account.getNumber().equals(testNumberAccount) &&
                 account.getBalance() == testBalance ) &&
-                (!oldNumberAccount.equals(Account.NUMBER_DEFAULT) &&
-                        oldBalance != Account.BALANCE_DEFAULT)) {
-            System.out.println("COMPLETED: Second constructor account test.");
+                (!oldNumberAccount.equals(DebitAccount.NUMBER_DEFAULT) &&
+                        oldBalance != DebitAccount.BALANCE_DEFAULT)) {
+            result.append("COMPLETED: Second constructor account test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: Second constructor account test.");
         }
     }
 
     private static void FirstTestIndividual() {
-        Individual individual = new Individual();
+        long start = System.currentTimeMillis();
+        Individual individual = new Individual("testName");
         boolean test;
         int testSize = 0;
         Account[] testAccounts = getAccounts();
@@ -172,15 +186,20 @@ public class Test {
 
         test = test && individual.getIndex(testAccounts[5].getNumber()) == 3;
 
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if (test) {
-            System.out.println("COMPLETED: First constructor individual test.");
+            result.append("COMPLETED: First constructor individual test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: First constructor individual test.");
         }
     }
 
     private static void SecondTestIndividual() {
-        Individual individual = new Individual(5);
+        long start = System.currentTimeMillis();
+        Individual individual = new Individual("testName", 5);
         boolean test;
         int testSize = 0;
         test = testSize == individual.size();
@@ -192,28 +211,39 @@ public class Test {
             test = test && testSize == individual.size();
         }
 
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if (test) {
-            System.out.println("COMPLETED: Second constructor individual test.");
+            result.append("COMPLETED: Second constructor individual test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: Second constructor individual test.");
         }
     }
 
     private static void ThirdTestIndividual() {
+        long start = System.currentTimeMillis();
         Account[] testAccounts = getAccounts();
-        Individual individual = new Individual(testAccounts);
+        Individual individual = new Individual("testName", testAccounts);
         boolean test;
         int testSize = testAccounts.length;
         test = testSize == individual.size();
         test = test && !testAccounts.toString().equals(individual.getAccounts().toString());
+
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if (test) {
-            System.out.println("COMPLETED: Third constructor individual test.");
+            result.append("COMPLETED: Third constructor individual test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: Third constructor individual test.");
         }
     }
 
     private static void FirstTestAccountManager() {
+        long start = System.currentTimeMillis();
         AccountManager accountManager = new AccountManager(4);
         boolean test;
         int testSize = 0;
@@ -258,7 +288,7 @@ public class Test {
         test = test && accountManager.get(3).equals(testIndividuals[1]);
         test = test && accountManager.get(4).equals(testIndividuals[2]);
 
-        Individual oldIndividual = accountManager.get(0);
+        Client oldIndividual = accountManager.get(0);
         test = test && accountManager.set(0, testIndividuals[2]).equals(testIndividuals[3]);
         test = test && !accountManager.get(0).equals(oldIndividual);
         test = test && accountManager.get(0).equals(testIndividuals[2]);
@@ -274,9 +304,9 @@ public class Test {
         test = test && accountManager.get(3).equals(testIndividuals[2]);
         test = test && accountManager.get(4) == null;
 
-        Individual[] sortedIndividuals = accountManager.sortedByBalanceIndividuals();
+        Client[] sortedIndividuals = accountManager.sortedByBalanceClients();
         double testBalance = 0;
-        for (Individual it : sortedIndividuals) {
+        for (Client it : sortedIndividuals) {
             test = test & it.totalBalance() >= testBalance;
             testBalance = it.totalBalance();
         }
@@ -291,22 +321,32 @@ public class Test {
         test = test && accountManager.setAccount(oldAccount.getNumber(), testIndividuals[0].get(2)).equals(oldAccount);
         test = test && accountManager.getAccount(testIndividuals[0].get(2).getNumber()).equals(testIndividuals[0].get(2));
 
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if (test) {
-            System.out.println("COMPLETED: First constructor accountManager test.");
+            result.append("COMPLETED: First constructor accountManager test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: First constructor accountManager test.");
         }
     }
 
     private static void SecondTestAccountManager() {
+        long start = System.currentTimeMillis();
         Individual[] testIndividuals = getIndividuals();
         AccountManager accountManager = new AccountManager(testIndividuals);
         boolean test;
         int testSize = testIndividuals.length;
         test = testSize == accountManager.size();
-        test = test && !testIndividuals.toString().equals(accountManager.getIndividuals().toString());
+        test = test && !testIndividuals.toString().equals(accountManager.getClients().toString());
+
+        long end = System.currentTimeMillis();
+        StringBuilder result = new StringBuilder();
         if (test) {
-            System.out.println("COMPLETED: Second constructor accountManager test.");
+            result.append("COMPLETED: Second constructor accountManager test.");
+            result.append((double) end - start);
+            System.out.println(result.toString());
         } else {
             System.out.println("ERROR: Second constructor accountManager test.");
         }
@@ -314,31 +354,31 @@ public class Test {
 
     private static Account[] getAccounts() {
         Account[] testAccounts = new Account[25];
-        testAccounts[0] = new Account("001", 34324);
-        testAccounts[1] = new Account("002", 25435);
-        testAccounts[2] = new Account("003", 85934);
-        testAccounts[3] = new Account("004", 12324);
-        testAccounts[4] = new Account("005", 56765);
-        testAccounts[5] = new Account("006", 56856);
-        testAccounts[6] = new Account("007", 34324);
-        testAccounts[7] = new Account("008", 25435);
-        testAccounts[8] = new Account("009", 85934);
-        testAccounts[9] = new Account("010", 12324);
-        testAccounts[10] = new Account("011", 56765);
-        testAccounts[11] = new Account("012", 56856);
-        testAccounts[12] = new Account("013", 34324);
-        testAccounts[13] = new Account("014", 25435);
-        testAccounts[14] = new Account("015", 85934);
-        testAccounts[15] = new Account("016", 12324);
-        testAccounts[16] = new Account("017", 56765);
-        testAccounts[17] = new Account("018", 56856);
-        testAccounts[18] = new Account("019", 34324);
-        testAccounts[19] = new Account("020", 25435);
-        testAccounts[20] = new Account("021", 85934);
-        testAccounts[21] = new Account("022", 12324);
-        testAccounts[22] = new Account("023", 56765);
-        testAccounts[23] = new Account("024", 56856);
-        testAccounts[24] = new Account("025", 56856);
+        testAccounts[0] = new DebitAccount("001", 34324);
+        testAccounts[1] = new DebitAccount("002", 25435);
+        testAccounts[2] = new DebitAccount("003", 85934);
+        testAccounts[3] = new DebitAccount("004", 12324);
+        testAccounts[4] = new DebitAccount("005", 56765);
+        testAccounts[5] = new DebitAccount("006", 56856);
+        testAccounts[6] = new DebitAccount("007", 34324);
+        testAccounts[7] = new DebitAccount("008", 25435);
+        testAccounts[8] = new DebitAccount("009", 85934);
+        testAccounts[9] = new DebitAccount("010", 12324);
+        testAccounts[10] = new DebitAccount("011", 56765);
+        testAccounts[11] = new DebitAccount("012", 56856);
+        testAccounts[12] = new DebitAccount("013", 34324);
+        testAccounts[13] = new DebitAccount("014", 25435);
+        testAccounts[14] = new DebitAccount("015", 85934);
+        testAccounts[15] = new DebitAccount("016", 12324);
+        testAccounts[16] = new DebitAccount("017", 56765);
+        testAccounts[17] = new DebitAccount("018", 56856);
+        testAccounts[18] = new DebitAccount("019", 34324);
+        testAccounts[19] = new DebitAccount("020", 25435);
+        testAccounts[20] = new DebitAccount("021", 85934);
+        testAccounts[21] = new DebitAccount("022", 12324);
+        testAccounts[22] = new DebitAccount("023", 56765);
+        testAccounts[23] = new DebitAccount("024", 56856);
+        testAccounts[24] = new DebitAccount("025", 56856);
         return testAccounts;
     }
 
@@ -350,7 +390,7 @@ public class Test {
         for (int i = 0, j = 0, k = 0; i < accounts.length; i++) {
             if (k == 4) {
                 tmpAccounts[k] = accounts[i];
-                tmpIndividual = new Individual(tmpAccounts);
+                tmpIndividual = new Individual("testName", tmpAccounts);
                 testIndividuals[j++] = tmpIndividual;
                 k = 0;
             } else {

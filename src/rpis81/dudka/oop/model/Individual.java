@@ -1,21 +1,23 @@
 package rpis81.dudka.oop.model;
 
-public class Individual {
+public class Individual implements Client {
 
     public static final int SIZE_DEFAULT = 16;
 
     private Account[] accounts;
+    private String name;
     private int size;
 
-    public Individual() {
-        this(SIZE_DEFAULT);
+    public Individual(String name) {
+        this(name, SIZE_DEFAULT);
     }
 
-    public Individual(int size) {
-        this(new Account[size]);
+    public Individual(String name, int size) {
+        this(name, new Account[size]);
     }
 
-    public Individual(Account[] accounts) {
+    public Individual(String name, Account[] accounts) {
+        this.name = name;
         this.accounts = new Account[accounts.length];
         toFill(accounts);
     }
@@ -147,6 +149,16 @@ public class Individual {
             totalBalance += account.getBalance();
         }
         return totalBalance;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getIndex(String accountNumber) {
