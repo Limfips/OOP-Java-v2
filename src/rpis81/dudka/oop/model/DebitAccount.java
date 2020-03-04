@@ -10,7 +10,6 @@ public class DebitAccount extends AbstractAccount {
         super(number, balance);
     }
 
-
     public String toString() {
         final StringBuilder sb = new StringBuilder("DebitAccount{");
         sb.append(super.toString());
