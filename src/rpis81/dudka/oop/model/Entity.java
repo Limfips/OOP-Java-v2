@@ -1,6 +1,9 @@
 package rpis81.dudka.oop.model;
 
-public class Entity implements Client {
+import java.util.Arrays;
+import java.util.Objects;
+
+public class Entity implements Client, Cloneable {
 
     public static final int CREDIT_SCORES_DEFAULT = 0;
 
@@ -88,7 +91,21 @@ public class Entity implements Client {
 
     @Override
     public Account remove(String accountNumber) {
-        return removeNodeByIndex(getIndex(accountNumber));
+        return removeNodeByIndex(indexOf(accountNumber));
+    }
+
+    @Override
+    public boolean remove(Account account) {
+        return remove(account.getNumber()) != null;
+    }
+
+    @Override
+    public double debtTotal() {
+        double debBalance = 0;
+        for (Account it : getCreditAccounts()) {
+            debBalance += it.getBalance();
+        }
+        return debBalance;
     }
 
     @Override
@@ -131,7 +148,7 @@ public class Entity implements Client {
     }
 
     @Override
-    public int getIndex(String accountNumber) {
+    public int indexOf(String accountNumber) {
         Account[] accounts = getAccounts();
         for (int i = 0; i < size; i++) {
             if (accounts[i] != null) {
@@ -297,5 +314,42 @@ public class Entity implements Client {
             sb.append('}');
             return sb.toString();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Entity)) return false;
+        Entity entity = (Entity) o;
+        return size == entity.size &&
+                creditScores == entity.creditScores &&
+                Objects.equals(head, entity.head) &&
+                Objects.equals(tail, entity.tail) &&
+                Objects.equals(name, entity.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return  Arrays.hashCode(getAccounts()) ^
+                Objects.hash(name) ^ Objects.hash(size) ^
+                Objects.hash(creditScores);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Client").append('\n');
+        sb.append("name: ").append(name).append('\n');
+        sb.append("creditScores: ").append(creditScores).append('\n');
+        for (Account it : getAccounts()) {
+            sb.append(it.toString()).append('\n');
+        }
+        sb.append("totalBalance").append(totalBalance());
+        sb.append('}');
+        return sb.toString();
     }
 }

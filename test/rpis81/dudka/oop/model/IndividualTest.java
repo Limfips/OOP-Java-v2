@@ -201,9 +201,9 @@ public class IndividualTest {
     @Test
     public void getIndex() {
         Individual individual = new Individual(testName, firstTestAccounts);
-        assertEquals(-1, individual.getIndex("sdsafsd"));
-        assertEquals(0, individual.getIndex(firstTestAccounts[0].getNumber()));
-        assertEquals(4, individual.getIndex(firstTestAccounts[4].getNumber()));
+        assertEquals(-1, individual.indexOf("sdsafsd"));
+        assertEquals(0, individual.indexOf(firstTestAccounts[0].getNumber()));
+        assertEquals(4, individual.indexOf(firstTestAccounts[4].getNumber()));
     }
 
     @Test
@@ -268,6 +268,47 @@ public class IndividualTest {
         assertEquals(individual.getStatus(), ClientStatus.BAD);
         individual.addCreditScores(-1);
         assertEquals(individual.getStatus(), ClientStatus.BAD);
+    }
+
+    @Test
+    public void removeByAccount() {
+        int testSizeIndividual = 10;
+        Account[] accounts = new Account[testSizeIndividual];
+        System.arraycopy(firstTestAccounts, 0, accounts, 0, testSizeIndividual);
+        Individual individual = new Individual(testName, accounts);
+        assertEquals(individual.size(), testSizeIndividual);
+
+        for (int i = 0; i < testSizeIndividual; i++) {
+            assertEquals(individual.get(i), accounts[i]);
+        }
+
+        assertFalse(individual.remove(firstTestAccounts[11]));
+        assertFalse(individual.remove(firstTestAccounts[24]));
+        assertTrue(individual.remove(firstTestAccounts[0]));
+        assertTrue(individual.remove(firstTestAccounts[1]));
+        assertTrue(individual.remove(firstTestAccounts[6]));
+
+        assertEquals(testSizeIndividual - 3, individual.size());
+
+        assertEquals(individual.get(0), firstTestAccounts[2]);
+        assertEquals(individual.get(1), firstTestAccounts[3]);
+        assertEquals(individual.get(2), firstTestAccounts[4]);
+        assertEquals(individual.get(3), firstTestAccounts[5]);
+        assertEquals(individual.get(4), firstTestAccounts[7]);
+        assertEquals(individual.get(5), firstTestAccounts[8]);
+        assertEquals(individual.get(6), firstTestAccounts[9]);
+    }
+
+    @Test
+    public void debtTotal() {
+        Individual individual = new Individual(testName, firstTestAccounts);
+        double total = 0;
+        for (Account it : firstTestAccounts) {
+            if (it instanceof Credit) {
+                total += it.getBalance();
+            }
+        }
+        assertEquals(total, individual.debtTotal(), 0.0);
     }
 
     private Account[] getTestAccounts() {

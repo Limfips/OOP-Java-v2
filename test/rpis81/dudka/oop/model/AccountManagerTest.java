@@ -96,11 +96,11 @@ public class AccountManagerTest {
 
     @Test
     public void sortedByBalanceClients() {
-        double testBalanse = 0;
+        double testBalance = 0;
         Client[] clients = accountManager.sortedByBalanceClients();
         for (Client it : clients) {
-            assertTrue(it.totalBalance() > testBalanse);
-            testBalanse = it.totalBalance();
+            assertTrue(it.totalBalance() > testBalance);
+            testBalance = it.totalBalance();
         }
     }
 
@@ -114,6 +114,23 @@ public class AccountManagerTest {
     public void getBedClientsWithOneCredit() {
         Client[] clients = accountManager.getBedClientsWithOneCredit();
         assertEquals(clients.length, 1);
+    }
+
+    @Test
+    public void removeByClient() {
+        assertFalse(accountManager.remove(new Individual("asdas")));
+        assertTrue(accountManager.remove(clients[1]));
+        assertEquals(accountManager.size(), clients.length - 1);
+        assertEquals(accountManager.get(0), clients[0]);
+        assertEquals(accountManager.get(1), clients[2]);
+        assertEquals(accountManager.get(2), clients[3]);
+        assertEquals(accountManager.get(3), clients[4]);
+        assertNull(accountManager.get(4));
+    }
+
+    @Test
+    public void indexOf() {
+        assertEquals(accountManager.indexOf(clients[2]), 2);
     }
 
     private Account[] getTestAccounts() {
@@ -145,7 +162,6 @@ public class AccountManagerTest {
         testAccounts[24] = new DebitAccount("025", 56853);
         return testAccounts;
     }
-
     private Client[] getTestClients() {
         Account[] accounts = getTestAccounts();
         Client[] testClients = new Client[5];

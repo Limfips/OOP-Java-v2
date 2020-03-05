@@ -1,6 +1,9 @@
 package rpis81.dudka.oop.model;
 
-public class Individual implements Client {
+import java.util.Arrays;
+import java.util.Objects;
+
+public class Individual implements Client, Cloneable {
 
     public static final int SIZE_DEFAULT = 16;
     public static final int CREDIT_SCORES_DEFAULT = 0;
@@ -113,6 +116,20 @@ public class Individual implements Client {
         return null;
     }
 
+    @Override
+    public boolean remove(Account account) {
+        return remove(account.getNumber()) != null;
+    }
+
+    @Override
+    public double debtTotal() {
+        double debBalance = 0;
+        for (Account it : getCreditAccounts()) {
+            debBalance += it.getBalance();
+        }
+        return debBalance;
+    }
+
 
     private Account toRemove(int index) {
         Account oldAccount = this.accounts[index];
@@ -192,7 +209,7 @@ public class Individual implements Client {
         return result;
     }
 
-    public int getIndex(String accountNumber) {
+    public int indexOf(String accountNumber) {
         for (int i = 0; i < size; i++) {
             if (this.accounts[i].getNumber().equals(accountNumber)) {
                 return i;
@@ -225,15 +242,34 @@ public class Individual implements Client {
     }
 
     //Для удобства))))
+    @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Individual{");
-        sb.append("accounts={");
+        final StringBuilder sb = new StringBuilder("Client").append('\n');
+        sb.append("name: ").append(name).append('\n');
+        sb.append("creditScores: ").append(creditScores).append('\n');
         for (Account it : getAccounts()) {
-            sb.append(it).append(", ");
+            sb.append(it.toString()).append('\n');
         }
-        sb.append("}");
-        sb.append(", size=").append(size);
+        sb.append("totalBalance").append(totalBalance());
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Individual)) return false;
+        Individual that = (Individual) o;
+        return size == that.size &&
+                creditScores == that.creditScores &&
+                Arrays.equals(accounts, that.accounts) &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return  Arrays.hashCode(accounts) ^
+                Objects.hash(name) ^ Objects.hash(size) ^
+                Objects.hash(creditScores);
     }
 }

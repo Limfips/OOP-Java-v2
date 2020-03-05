@@ -1,6 +1,8 @@
 package rpis81.dudka.oop.model;
 
-public class AbstractAccount implements Account {
+import java.util.Objects;
+
+public class AbstractAccount implements Account, Cloneable {
 
     public static final String NUMBER_DEFAULT = "";
     public static final double BALANCE_DEFAULT = 0;
@@ -36,11 +38,27 @@ public class AbstractAccount implements Account {
         this.balance = balance;
     }
 
+    @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("AbstractAccount{");
-        sb.append("number='").append(number).append('\'');
-        sb.append(", balance=").append(balance);
-        sb.append('}');
-        return sb.toString();
+        return String.format("number: %s balance: %f", number, balance);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractAccount)) return false;
+        AbstractAccount that = (AbstractAccount) o;
+        return Double.compare(that.balance, balance) == 0 &&
+                Objects.equals(number, that.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, balance);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

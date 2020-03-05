@@ -1,6 +1,6 @@
 package rpis81.dudka.oop.model;
 
-public class DebitAccount extends AbstractAccount {
+public class DebitAccount extends AbstractAccount implements Cloneable {
 
     public DebitAccount() {
         super();
@@ -10,10 +10,23 @@ public class DebitAccount extends AbstractAccount {
         super(number, balance);
     }
 
+    @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("DebitAccount{");
-        sb.append(super.toString());
-        sb.append('}');
-        return sb.toString();
+        return String.format("DebitAccount - %s", super.toString());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode() * 53;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

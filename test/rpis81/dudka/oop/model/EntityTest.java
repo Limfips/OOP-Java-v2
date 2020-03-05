@@ -267,12 +267,12 @@ public class EntityTest {
         Entity entity;
 
         entity = getFirstConstructor();
-        assertEquals(-1, entity.getIndex("sdsafsd"));
+        assertEquals(-1, entity.indexOf("sdsafsd"));
 
         entity = getSecondConstructor();
-        assertEquals(-1, entity.getIndex("sdsafsd"));
-        assertEquals(0, entity.getIndex(firstTestAccounts[0].getNumber()));
-        assertEquals(4, entity.getIndex(firstTestAccounts[4].getNumber()));
+        assertEquals(-1, entity.indexOf("sdsafsd"));
+        assertEquals(0, entity.indexOf(firstTestAccounts[0].getNumber()));
+        assertEquals(4, entity.indexOf(firstTestAccounts[4].getNumber()));
     }
 
     @Test
@@ -342,5 +342,41 @@ public class EntityTest {
         assertEquals(entity.getStatus(), ClientStatus.BAD);
         entity.addCreditScores(-1);
         assertEquals(entity.getStatus(), ClientStatus.BAD);
+    }
+
+    @Test
+    public void removeByAccount() {
+        Entity entity;
+
+        entity = getFirstConstructor();
+        assertNull(entity.remove(""));
+        assertNull(entity.remove("gdsgsgerg"));
+
+        entity = getSecondConstructor();
+        assertFalse(entity.remove(secondTestAccounts[1]));
+        assertFalse(entity.remove(secondTestAccounts[2]));
+        assertTrue(entity.remove(firstTestAccounts[0]));
+        assertEquals(entity.get(0), firstTestAccounts[1]);
+        assertTrue(entity.remove(firstTestAccounts[2]));
+        assertEquals(entity.get(1), firstTestAccounts[3]);
+        assertTrue(entity.remove(firstTestAccounts[4]));
+        assertEquals(entity.get(2), firstTestAccounts[5]);
+    }
+
+    @Test
+    public void debtTotal() {
+        Entity entity;
+
+        entity = getFirstConstructor();
+        assertEquals(0, entity.debtTotal(), 0.0);
+
+        entity = getSecondConstructor();
+        double total = 0;
+        for (Account it : firstTestAccounts) {
+            if (it instanceof Credit) {
+                total += it.getBalance();
+            }
+        }
+        assertEquals(total, entity.debtTotal(), 0.0);
     }
 }

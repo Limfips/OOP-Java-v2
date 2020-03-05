@@ -9,11 +9,13 @@ public interface Client {
     Account set(int index, Account account);
     Account remove(int index);
     Account remove(String accountNumber);
+    boolean remove(Account account);
+    double debtTotal();
     int size();
     Account[] getAccounts();
     Account[] sortedAccountsByBalance();
     double totalBalance();
-    int getIndex(String accountNumber);
+    int indexOf(String accountNumber);
     String getName();
     void setName(String name);
     int getCreditScores();
@@ -33,4 +35,6 @@ public interface Client {
         }
     }
     Account[] getCreditAccounts();
+
+
 }

@@ -113,6 +113,15 @@ public class AccountManager {
         return null;
     }
 
+    public int indexOf(Client client) {
+        for (int i = 0; i < size; i++) {
+            if (this.clients[i].equals(client)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public Account removeAccount(String accountNumber) {
         for (int i = 0; i < size; i++) {
             if (this.clients[i].hasAccount(accountNumber)) {
@@ -122,11 +131,15 @@ public class AccountManager {
         return null;
     }
 
+    public boolean remove(Client client) {
+        return  remove(indexOf(client)) != null;
+    }
+
     public Account setAccount(String accountNumber, Account account) {
         for (int i = 0; i < size; i++) {
             if (this.clients[i].hasAccount(accountNumber)) {
                 return this.clients[i]
-                        .set(this.clients[i].getIndex(accountNumber), account);
+                        .set(this.clients[i].indexOf(accountNumber), account);
             }
         }
         return null;
@@ -180,14 +193,10 @@ public class AccountManager {
 
 
     public String toString() {
-        final StringBuilder sb = new StringBuilder("AccountManager{");
-        sb.append("clients={");
+        final StringBuilder sb = new StringBuilder();
         for (Client it : getClients()) {
-            sb.append(it).append(", ");
+            sb.append(it).append('\n');
         }
-        sb.append("}");
-        sb.append(", size=").append(size);
-        sb.append('}');
         return sb.toString();
     }
 }
