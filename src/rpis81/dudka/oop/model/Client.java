@@ -1,12 +1,12 @@
 package rpis81.dudka.oop.model;
 
 public interface Client {
-    boolean add(Account account);
-    boolean add(int index, Account account);
+    boolean add(Account account) throws DublicateAccountNumberException;
+    boolean add(int index, Account account) throws DublicateAccountNumberException;
     Account get(int index);
     Account get(String accountNumber);
     boolean hasAccount(String accountNumber);
-    Account set(int index, Account account);
+    Account set(int index, Account account) throws DublicateAccountNumberException;
     Account remove(int index);
     Account remove(String accountNumber);
     boolean remove(Account account);

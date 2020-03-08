@@ -1,6 +1,7 @@
 package rpis81.dudka.oop.model;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Entity implements Client, Cloneable {
@@ -15,12 +16,14 @@ public class Entity implements Client, Cloneable {
 
     public Entity(String name) {
         initHead();
+        if (name == null) throw new NullPointerException();
         this.name = name;
         this.creditScores = CREDIT_SCORES_DEFAULT;
     }
 
-    public Entity(String name, Account[] accounts) {
+    public Entity(String name, Account[] accounts) throws DublicateAccountNumberException {
         this(name);
+        if (accounts == null) throw new NullPointerException();
         addAll(accounts);
     }
 
@@ -30,7 +33,8 @@ public class Entity implements Client, Cloneable {
         this.head.next = this.head;
     }
 
-    private boolean addAll(Account[] accounts) {
+    private boolean addAll(Account[] accounts) throws DublicateAccountNumberException {
+        if (accounts == null) throw new NullPointerException();
         boolean result = true;
         int numNew = accounts.length;
         if (numNew == 0) return true;
@@ -41,62 +45,95 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public boolean add(Account account) {
+    public boolean add(Account account) throws DublicateAccountNumberException {
+        if (account == null) throw new NullPointerException();
+        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+
         return addLast(account);
     }
 
     @Override
-    public boolean add(int index, Account account) {
+    public boolean add(int index, Account account) throws DublicateAccountNumberException {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (account == null) throw new NullPointerException();
+        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+
         return addNodeByIndex(index, new Node(account, null));
     }
 
     @Override
     public Account get(int index) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (checkIndex(index)) {
             return getNodeByIndex(index).value;
         }
-        return null;
+        throw new NoSuchElementException();
     }
 
     @Override
     public Account get(String accountNumber) {
+        if (accountNumber == null) throw new NullPointerException();
+        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
+
         Account resultAccount = null;
-        for (Node node = this.head.next; node != this.head; node = node.next) {
-            if (node.value.getNumber().equals(accountNumber)) {
-                resultAccount = node.value;
-                break;
+            for (Node node = this.head.next; node != this.head; node = node.next) {
+                if (node.value.getNumber().equals(accountNumber)) {
+                    resultAccount = node.value;
+                    return resultAccount;
+                }
             }
-        }
-        return resultAccount;
+        throw new NoSuchElementException();
     }
 
     @Override
     public boolean hasAccount(String accountNumber) {
-        return get(accountNumber) != null;
+        if (accountNumber == null) throw new NullPointerException();
+        try {
+            get(accountNumber);
+            return true;
+        } catch (NoSuchElementException ex) {
+            return false;
+        }
     }
 
     @Override
-    public Account set(int index, Account account) {
-        Account oldAccount = null;
-        if (account != null) {
-            oldAccount = setNodeByIndex(index, account);
-        }
-        return oldAccount;
+    public Account set(int index, Account account) throws DublicateAccountNumberException {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (account == null) throw new NullPointerException();
+        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+
+        Account oldAccount;
+        oldAccount = setNodeByIndex(index, account);
+        if (oldAccount != null) return oldAccount;
+        throw new NoSuchElementException();
     }
 
     @Override
     public Account remove(int index) {
-        return removeNodeByIndex(index);
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        Account oldAccount = removeNodeByIndex(index);
+        if (oldAccount != null) return oldAccount;
+        throw new NoSuchElementException();
     }
 
     @Override
     public Account remove(String accountNumber) {
-        return removeNodeByIndex(indexOf(accountNumber));
+        if (accountNumber == null) throw new NullPointerException();
+        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
+        Account oldAccount = removeNodeByIndex(indexOf(accountNumber));
+        if (oldAccount != null) return oldAccount;
+        throw new NoSuchElementException();
     }
 
     @Override
     public boolean remove(Account account) {
-        return remove(account.getNumber()) != null;
+        if (account == null) throw new NullPointerException();
+        try {
+            remove(account.getNumber());
+            return true;
+        }catch (NoSuchElementException ex) {
+            return false;
+        }
     }
 
     @Override
@@ -149,15 +186,18 @@ public class Entity implements Client, Cloneable {
 
     @Override
     public int indexOf(String accountNumber) {
-        Account[] accounts = getAccounts();
-        for (int i = 0; i < size; i++) {
-            if (accounts[i] != null) {
-                if (accounts[i].getNumber().equals(accountNumber)) {
-                    return i;
+        if (accountNumber == null) throw new NullPointerException();
+        if (!isValidNumber(accountNumber))throw new InvalidAccountNumberException();
+
+            Account[] accounts = getAccounts();
+            for (int i = 0; i < size; i++) {
+                if (accounts[i] != null) {
+                    if (accounts[i].getNumber().equals(accountNumber)) {
+                        return i;
+                    }
                 }
             }
-        }
-        return -1;
+        throw new NoSuchElementException();
     }
 
     @Override
@@ -201,6 +241,7 @@ public class Entity implements Client, Cloneable {
 
     // По Заданию
     private boolean addLast(Account account) {
+        if (account == null) throw new NullPointerException();
         if (account != null) {
             Node newNode = new Node(account, this.head);
             this.tail.next = newNode;
@@ -213,6 +254,7 @@ public class Entity implements Client, Cloneable {
 
     // По Заданию
     private Node getNodeByIndex(int index) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         Node resultNode = null;
         int count = 0;
         for (Node node = this.head.next; node != this.head; node = node.next) {
@@ -226,6 +268,7 @@ public class Entity implements Client, Cloneable {
 
     // По Заданию
     private boolean addNodeByIndex(int index, Node addNode) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (checkIndex(index)) {
             if (index == 0) {
                 addNode.next = this.head.next;
@@ -249,6 +292,7 @@ public class Entity implements Client, Cloneable {
 
     // По Заданию
     private Account removeNodeByIndex(int index) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (checkIndex(index)) {
             Node removeNode;
             if (index == 0) {
@@ -273,6 +317,8 @@ public class Entity implements Client, Cloneable {
 
     // По Заданию
     private Account setNodeByIndex(int index, Account account) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (account == null) throw new NullPointerException();
         Account oldValue = null;
         Node node = getNodeByIndex(index);
         if (node != null) {
@@ -284,6 +330,15 @@ public class Entity implements Client, Cloneable {
 
     public boolean isEmpty() {
         return this.size == 0;
+    }
+
+    private boolean isDuplicateNumber(String accountNumber) {
+        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
+        return hasAccount(accountNumber);
+    }
+
+    private boolean isValidNumber(String accountNumber) {
+        return AbstractAccount.pattern.matcher(accountNumber).matches();
     }
 
     private boolean checkIndex(int index) {
@@ -349,7 +404,6 @@ public class Entity implements Client, Cloneable {
             sb.append(it.toString()).append('\n');
         }
         sb.append("totalBalance").append(totalBalance());
-        sb.append('}');
         return sb.toString();
     }
 }

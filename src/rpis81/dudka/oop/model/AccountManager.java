@@ -1,5 +1,7 @@
 package rpis81.dudka.oop.model;
 
+import java.util.NoSuchElementException;
+
 public class AccountManager {
 
     private Client[] clients;
@@ -15,6 +17,7 @@ public class AccountManager {
     }
 
     private void toFill(Client[] sourceArray) {
+        if (sourceArray == null) throw new NullPointerException();
         int i = 0;
         for (Client it : sourceArray) {
             if (it != null) {
@@ -25,13 +28,17 @@ public class AccountManager {
     }
 
     public boolean add(Client client) {
+        if (client == null) throw new NullPointerException();
         checkQuantity();
         this.clients[size++] = client;
         return true;
     }
 
     public boolean add(int index, Client client) {
-        if (index > -1 && index < this.clients.length){
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (client == null) throw new NullPointerException();
+
+        if (index < this.clients.length){
             if (size + 1 > this.clients.length) {
                 increaseArray();
             }
@@ -54,30 +61,34 @@ public class AccountManager {
     }
 
     public Client get(int index) {
-        if (index > -1 && index < size){
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (index < size){
             return this.clients[index];
         }
-        return null;
+        throw new NoSuchElementException();
     }
 
     public Client set(int index, Client client) {
-        if (index > -1 && index < size){
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (client == null) throw new NullPointerException();
+        if (index < size){
             Client oldAccount = this.clients[index];
             this.clients[index] = client;
             return oldAccount;
         }
-        return null;
+        throw new NoSuchElementException();
     }
 
     public Client remove(int index) {
-        if (index > -1 && index < size){
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        if (index < size){
             Client oldAccount = this.clients[index];
             this.clients[index] = null;
             size--;
             shiftValues(index);
             return oldAccount;
         }
-        return null;
+        throw new NoSuchElementException();
     }
 
     public int size() {
@@ -105,44 +116,65 @@ public class AccountManager {
     }
 
     public Account getAccount(String accountNumber) {
+        if (accountNumber == null) throw new NullPointerException();
+        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
+
         for (int i = 0; i < size; i++) {
-            if (this.clients[i].hasAccount(accountNumber)) {
-                return this.clients[i].get(accountNumber);
+                if (this.clients[i].hasAccount(accountNumber)) {
+                    return this.clients[i].get(accountNumber);
+                }
             }
-        }
-        return null;
+        throw new NoSuchElementException();
     }
 
     public int indexOf(Client client) {
+        if (client == null) throw new NullPointerException();
         for (int i = 0; i < size; i++) {
             if (this.clients[i].equals(client)) {
                 return i;
             }
         }
-        return -1;
+        throw new NoSuchElementException();
     }
 
     public Account removeAccount(String accountNumber) {
+        if (accountNumber == null) throw new NullPointerException();
+        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
+
         for (int i = 0; i < size; i++) {
-            if (this.clients[i].hasAccount(accountNumber)) {
-                return this.clients[i].remove(accountNumber);
+                if (this.clients[i].hasAccount(accountNumber)) {
+                    return this.clients[i].remove(accountNumber);
+                }
             }
-        }
-        return null;
+        throw new NoSuchElementException();
     }
 
     public boolean remove(Client client) {
-        return  remove(indexOf(client)) != null;
+        if (client == null) throw new NullPointerException();
+        try {
+            remove(indexOf(client));
+            return true;
+        }catch (NoSuchElementException ex) {
+            return false;
+        }
     }
 
-    public Account setAccount(String accountNumber, Account account) {
+    public Account setAccount(String accountNumber, Account account) throws DublicateAccountNumberException {
+        if (accountNumber == null) throw new NullPointerException();
+        if (account == null) throw new NullPointerException();
+        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
+
         for (int i = 0; i < size; i++) {
-            if (this.clients[i].hasAccount(accountNumber)) {
-                return this.clients[i]
-                        .set(this.clients[i].indexOf(accountNumber), account);
+                if (this.clients[i].hasAccount(accountNumber)) {
+                    return this.clients[i]
+                            .set(this.clients[i].indexOf(accountNumber), account);
+                }
             }
-        }
-        return null;
+        throw new NoSuchElementException();
+    }
+
+    private boolean isValidNumber(String accountNumber) {
+        return AbstractAccount.pattern.matcher(accountNumber).matches();
     }
 
     public Client[] getClientsWithOneCredit() {
