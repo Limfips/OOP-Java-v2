@@ -4,7 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import rpis81.dudka.oop.model.source.DataSource;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -55,7 +56,7 @@ public class AccountManagerTest {
 
     @Test
     public void sortedByBalanceClients() {
-        Client[] clients = accountManager.sortedByBalanceClients();
+        List<Client> clients = accountManager.sortedByBalanceClients();
         double balance = -10000000000000000000.0;
         for (Client it : clients) {
             assertTrue(it.totalBalance() >= balance);
@@ -86,20 +87,20 @@ public class AccountManagerTest {
         try {
             assertEquals(accountManager.setAccount(source.testAccounts[7].getNumber(), source.testAccounts[20]),
                     source.testAccounts[7]);
-        } catch (DublicateAccountNumberException e) {
+        } catch (DuplicateAccountNumberException e) {
             e.printStackTrace();
         }
     }
 
     @Test
     public void getClientsWithOneCredit() {
-        Client[] clients = accountManager.getClientsWithOneCredit();
-        assertEquals(clients.length, 3);
+        Set<Client> clients = accountManager.getClientsWithOneCredit();
+        assertEquals(clients.size(), 3);
     }
 
     @Test
     public void getBedClientsWithOneCredit() {
-        Client[] clients = accountManager.getBedClientsWithOneCredit();
-        assertEquals(clients.length, 1);
+        Set<Client> clients = accountManager.getBedClientsWithOneCredit();
+        assertEquals(clients.size(), 1);
     }
 }

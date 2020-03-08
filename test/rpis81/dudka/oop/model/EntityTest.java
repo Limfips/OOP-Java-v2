@@ -19,11 +19,7 @@ public class EntityTest {
 
     @Test
     public void add() {
-        try {
-            assertTrue(entity.add(source.testAccounts[20]));
-        } catch (DublicateAccountNumberException e) {
-            e.printStackTrace();
-        }
+        assertTrue(entity.add(source.testAccounts[20]));
     }
 
     @Test
@@ -33,7 +29,7 @@ public class EntityTest {
             assertEquals(entity.get(0), source.testAccounts[20]);
             assertEquals(entity.get(1), source.testAccounts[5]);
             assertEquals(entity.get(2), source.testAccounts[6]);
-        } catch (DublicateAccountNumberException e) {
+        } catch (DuplicateAccountNumberException e) {
             e.printStackTrace();
         }
     }
@@ -58,7 +54,7 @@ public class EntityTest {
         try {
             assertEquals(entity.set(0, source.testAccounts[20]), source.testAccounts[5]);
             assertEquals(entity.get(0), source.testAccounts[20]);
-        } catch (DublicateAccountNumberException e) {
+        } catch (DuplicateAccountNumberException e) {
             e.printStackTrace();
         }
     }
@@ -90,7 +86,7 @@ public class EntityTest {
     @Test
     public void debtTotal() {
         double debBalance = 0;
-        for (Account it : source.clients[1].getAccounts()) {
+        for (Account it : source.clients[1].toArray()) {
             if (it instanceof CreditAccount) {
                 debBalance += it.getBalance();
             }
@@ -106,7 +102,7 @@ public class EntityTest {
     @Test
     public void totalBalance() {
         double debBalance = 0;
-        for (Account it : source.clients[1].getAccounts()) {
+        for (Account it : source.clients[1].toArray()) {
             debBalance += it.getBalance();
         }
         assertEquals(debBalance, entity.totalBalance(), 0.0);

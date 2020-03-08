@@ -89,21 +89,13 @@ public class DataSource {
         System.arraycopy(accounts, 0, tmpAccounts, 0, 5);
         testClients[0] = new Individual("Individual_1", tmpAccounts);
         System.arraycopy(accounts, 5, tmpAccounts, 0, 5);
-        try {
-            testClients[1] = new Entity("Entity_2", tmpAccounts);
-        } catch (DublicateAccountNumberException e) {
-            e.printStackTrace();
-        }
+        testClients[1] = new Entity("Entity_2", tmpAccounts);
         testClients[1].addCreditScores(-6);
         System.arraycopy(accounts, 10, tmpAccounts, 0, 5);
         testClients[2] = new Individual("Individual_3", tmpAccounts);
         testClients[2].addCreditScores(-2);
         System.arraycopy(accounts, 15, tmpAccounts, 0, 5);
-        try {
-            testClients[3] = new Entity("Entity_4", tmpAccounts);
-        } catch (DublicateAccountNumberException e) {
-            e.printStackTrace();
-        }
+        testClients[3] = new Entity("Entity_4", tmpAccounts);
         System.arraycopy(accounts, 20, tmpAccounts, 0, 5);
         testClients[4] = new Individual("Individual_5", tmpAccounts);
         return testClients;

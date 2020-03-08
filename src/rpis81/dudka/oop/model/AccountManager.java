@@ -1,8 +1,6 @@
 package rpis81.dudka.oop.model;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class AccountManager implements Iterable<Client> {
 
@@ -103,9 +101,9 @@ public class AccountManager implements Iterable<Client> {
         return newClient;
     }
 
-    public Client[] sortedByBalanceClients() {
-        Client[] clients = getClients();
-        Arrays.sort(clients);
+    public List<Client> sortedByBalanceClients() {
+        List<Client> clients = Arrays.asList(getClients());
+        clients.sort(Client::compareTo);
         return clients;
     }
 
@@ -153,7 +151,7 @@ public class AccountManager implements Iterable<Client> {
         }
     }
 
-    public Account setAccount(String accountNumber, Account account) throws DublicateAccountNumberException {
+    public Account setAccount(String accountNumber, Account account) throws DuplicateAccountNumberException {
         if (accountNumber == null) throw new NullPointerException();
         if (account == null) throw new NullPointerException();
         if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
@@ -171,29 +169,23 @@ public class AccountManager implements Iterable<Client> {
         return AbstractAccount.pattern.matcher(accountNumber).matches();
     }
 
-    public Client[] getClientsWithOneCredit() {
-        Client[] clients = new Client[size];
-        int k = 0;
-        for (Client it : this) {
-            if (it.getCreditAccounts().length > 0) {
-                clients[k++] = it;
+    public Set<Client> getClientsWithOneCredit() {
+        Set<Client> result = new HashSet<>();
+        for (Client it: this) {
+            if (it.getCreditAccounts().size() > 0) {
+                result.add(it);
             }
         }
-        Client[] result = new Client[k];
-        System.arraycopy(clients, 0, result, 0, k);
         return result;
     }
 
-    public Client[] getBedClientsWithOneCredit() {
-        Client[] clients = new Client[size];
-        int k = 0;
+    public Set<Client> getBedClientsWithOneCredit() {
+        Set<Client> result = new HashSet<>();
         for (Client it: this) {
-            if (it.getCreditAccounts().length > 0 && it.getStatus().equals(ClientStatus.BAD)) {
-                clients[k++] = it;
+            if (it.getCreditAccounts().size() > 0 && it.getStatus().equals(ClientStatus.BAD)) {
+                result.add(it);
             }
         }
-        Client[] result = new Client[k];
-        System.arraycopy(clients, 0, result, 0, k);
         return result;
     }
 

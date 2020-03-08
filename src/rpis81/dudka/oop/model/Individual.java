@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class Individual implements Client, Cloneable {
 
@@ -46,19 +45,29 @@ public class Individual implements Client, Cloneable {
         size = i;
     }
 
-    public boolean add(Account account) throws DublicateAccountNumberException {
+    public boolean add(Account account) {
         if (account == null) throw new NullPointerException();
-        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+        if (isDuplicateNumber(account.getNumber())) try {
+            throw new DuplicateAccountNumberException();
+        } catch (DuplicateAccountNumberException e) {
+            e.printStackTrace();
+            return false;
+        }
 
         checkQuantity();
         this.accounts[size++] = account;
         return true;
     }
 
-    public boolean add(int index, Account account) throws DublicateAccountNumberException {
+    @Override
+    public void clear() {
+        this.accounts = new Account[SIZE_DEFAULT];
+    }
+
+    public boolean add(int index, Account account) throws DuplicateAccountNumberException {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (account == null) throw new NullPointerException();
-        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+        if (isDuplicateNumber(account.getNumber())) throw new DuplicateAccountNumberException();
 
         //ToDo тут переделай
         if (index < this.accounts.length){
@@ -92,10 +101,10 @@ public class Individual implements Client, Cloneable {
         throw new NoSuchElementException();
     }
 
-    public Account set(int index, Account account) throws DublicateAccountNumberException {
+    public Account set(int index, Account account) throws DuplicateAccountNumberException {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (account == null) throw new NullPointerException();
-        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+        if (isDuplicateNumber(account.getNumber())) throw new DuplicateAccountNumberException();
 
         if (index < size){
             Account oldAccount = this.accounts[index];
@@ -149,7 +158,8 @@ public class Individual implements Client, Cloneable {
         return size;
     }
 
-    public Account[] getAccounts() {
+    @Override
+    public Account[] toArray() {
         Account[] newAccount = new Account[size];
         System.arraycopy(this.accounts, 0, newAccount, 0, size);
         return newAccount;
@@ -218,7 +228,7 @@ public class Individual implements Client, Cloneable {
         final StringBuilder sb = new StringBuilder("Client").append('\n');
         sb.append("name: ").append(name).append('\n');
         sb.append("creditScores: ").append(creditScores).append('\n');
-        for (Account it : getAccounts()) {
+        for (Account it : toArray()) {
             sb.append(it.toString()).append('\n');
         }
         sb.append("totalBalance").append(totalBalance());

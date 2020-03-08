@@ -1,9 +1,6 @@
 package rpis81.dudka.oop.model;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 public class Entity implements Client, Cloneable {
 
@@ -22,7 +19,7 @@ public class Entity implements Client, Cloneable {
         this.creditScores = CREDIT_SCORES_DEFAULT;
     }
 
-    public Entity(String name, Account[] accounts) throws DublicateAccountNumberException {
+    public Entity(String name, Account[] accounts) {
         this(name);
         if (accounts == null) throw new NullPointerException();
         addAll(accounts);
@@ -34,7 +31,7 @@ public class Entity implements Client, Cloneable {
         this.head.next = this.head;
     }
 
-    private boolean addAll(Account[] accounts) throws DublicateAccountNumberException {
+    private boolean addAll(Account[] accounts) {
         if (accounts == null) throw new NullPointerException();
         boolean result = true;
         int numNew = accounts.length;
@@ -46,18 +43,28 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public boolean add(Account account) throws DublicateAccountNumberException {
+    public boolean add(Account account) {
         if (account == null) throw new NullPointerException();
-        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+        if (isDuplicateNumber(account.getNumber())) try {
+            throw new DuplicateAccountNumberException();
+        } catch (DuplicateAccountNumberException e) {
+            e.printStackTrace();
+            return false;
+        }
 
         return addLast(account);
     }
 
     @Override
-    public boolean add(int index, Account account) throws DublicateAccountNumberException {
+    public void clear() {
+        initHead();
+    }
+
+    @Override
+    public boolean add(int index, Account account) throws DuplicateAccountNumberException {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (account == null) throw new NullPointerException();
-        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+        if (isDuplicateNumber(account.getNumber())) throw new DuplicateAccountNumberException();
 
         return addNodeByIndex(index, new Node(account, null));
     }
@@ -87,10 +94,10 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public Account set(int index, Account account) throws DublicateAccountNumberException {
+    public Account set(int index, Account account) throws DuplicateAccountNumberException {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (account == null) throw new NullPointerException();
-        if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
+        if (isDuplicateNumber(account.getNumber())) throw new DuplicateAccountNumberException();
 
         Account oldAccount;
         oldAccount = setNodeByIndex(index, account);
@@ -132,7 +139,7 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public Account[] getAccounts() {
+    public Account[] toArray() {
         Account[] accounts = new Account[this.size];
         int index = 0;
         for (Node node = this.head.next; node != this.head; node = node.next) {
@@ -146,7 +153,7 @@ public class Entity implements Client, Cloneable {
         if (accountNumber == null) throw new NullPointerException();
         if (!isValidNumber(accountNumber))throw new InvalidAccountNumberException();
 
-            Account[] accounts = getAccounts();
+            Account[] accounts = toArray();
             for (int i = 0; i < size; i++) {
                 if (accounts[i] != null) {
                     if (accounts[i].getNumber().equals(accountNumber)) {
@@ -178,22 +185,22 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public Account[] getCreditAccounts() {
+    public Collection<Credit> getCreditAccounts() {
         Account[] credits = new Account[size];
-        Account[] accounts = getAccounts();
+        Account[] accounts = toArray();
         int j = 0;
         for (int i = 0; i < size; i++) {
             if (accounts[i] != null && accounts[i] instanceof Credit) {
                 credits[j++] = accounts[i];
             }
         }
-        Account[] result = new Account[j];
+        Credit[] result = new Credit[j];
         for (int i = 0, k = 0; i < size; i++) {
             if (credits[i] != null) {
-                result[k++] = credits[i];
+                result[k++] = (Credit) credits[i];
             }
         }
-        return result;
+        return Arrays.asList(result);
     }
 
     // По Заданию
@@ -335,7 +342,7 @@ public class Entity implements Client, Cloneable {
 
     @Override
     public int hashCode() {
-        return  Arrays.hashCode(getAccounts()) ^
+        return  Arrays.hashCode(toArray()) ^
                 Objects.hash(name) ^ Objects.hash(size) ^
                 Objects.hash(creditScores);
     }
@@ -350,7 +357,7 @@ public class Entity implements Client, Cloneable {
         final StringBuilder sb = new StringBuilder("Client").append('\n');
         sb.append("name: ").append(name).append('\n');
         sb.append("creditScores: ").append(creditScores).append('\n');
-        for (Account it : getAccounts()) {
+        for (Account it : toArray()) {
             sb.append(it.toString()).append('\n');
         }
         sb.append("totalBalance").append(totalBalance());

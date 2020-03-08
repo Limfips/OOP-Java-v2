@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import rpis81.dudka.oop.model.source.DataSource;
 
-import java.util.Iterator;
-
 import static org.junit.Assert.*;
 
 public class IndividualTest {
@@ -21,11 +19,7 @@ public class IndividualTest {
 
     @Test
     public void add() {
-        try {
-            assertTrue(individual.add(source.testAccounts[20]));
-        } catch (DublicateAccountNumberException e) {
-            e.printStackTrace();
-        }
+        assertTrue(individual.add(source.testAccounts[20]));
     }
 
     @Test
@@ -35,7 +29,7 @@ public class IndividualTest {
             assertEquals(individual.get(0), source.testAccounts[20]);
             assertEquals(individual.get(1), source.testAccounts[0]);
             assertEquals(individual.get(2), source.testAccounts[1]);
-        } catch (DublicateAccountNumberException e) {
+        } catch (DuplicateAccountNumberException e) {
             e.printStackTrace();
         }
     }
@@ -60,7 +54,7 @@ public class IndividualTest {
         try {
             assertEquals(individual.set(0, source.testAccounts[20]), source.testAccounts[0]);
             assertEquals(individual.get(0), source.testAccounts[20]);
-        } catch (DublicateAccountNumberException e) {
+        } catch (DuplicateAccountNumberException e) {
             e.printStackTrace();
         }
     }
@@ -92,7 +86,7 @@ public class IndividualTest {
     @Test
     public void debtTotal() {
         double debBalance = 0;
-        for (Account it : source.clients[0].getAccounts()) {
+        for (Account it : source.clients[0].toArray()) {
             if (it instanceof CreditAccount) {
                 debBalance += it.getBalance();
             }
@@ -108,7 +102,7 @@ public class IndividualTest {
     @Test
     public void totalBalance() {
         double debBalance = 0;
-        for (Account it : source.clients[0].getAccounts()) {
+        for (Account it : source.clients[0].toArray()) {
             debBalance += it.getBalance();
         }
         assertEquals(debBalance, individual.totalBalance(), 0.0);
