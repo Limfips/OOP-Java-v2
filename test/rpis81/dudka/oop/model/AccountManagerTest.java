@@ -58,7 +58,6 @@ public class AccountManagerTest {
         Client[] clients = accountManager.sortedByBalanceClients();
         double balance = -10000000000000000000.0;
         for (Client it : clients) {
-            System.out.println(it.totalBalance() + " | " + balance);
             assertTrue(it.totalBalance() >= balance);
             balance = it.totalBalance();
         }

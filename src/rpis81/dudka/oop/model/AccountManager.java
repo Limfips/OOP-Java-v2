@@ -1,8 +1,10 @@
 package rpis81.dudka.oop.model;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class AccountManager {
+public class AccountManager implements Iterable<Client> {
 
     private Client[] clients;
     private int size;
@@ -103,15 +105,7 @@ public class AccountManager {
 
     public Client[] sortedByBalanceClients() {
         Client[] clients = getClients();
-        for (int i = size-1; i > 0; i--){
-            for (int j = 0; j < i; j++){
-                if( clients[j].totalBalance() > clients[j+1].totalBalance() ){
-                    Client tmp = clients[j];
-                    clients[j] = clients[j+1];
-                    clients[j+1] = tmp;
-                }
-            }
-        }
+        Arrays.sort(clients);
         return clients;
     }
 
@@ -180,7 +174,7 @@ public class AccountManager {
     public Client[] getClientsWithOneCredit() {
         Client[] clients = new Client[size];
         int k = 0;
-        for (Client it : getClients()) {
+        for (Client it : this) {
             if (it.getCreditAccounts().length > 0) {
                 clients[k++] = it;
             }
@@ -193,7 +187,7 @@ public class AccountManager {
     public Client[] getBedClientsWithOneCredit() {
         Client[] clients = new Client[size];
         int k = 0;
-        for (Client it : getClients()) {
+        for (Client it: this) {
             if (it.getCreditAccounts().length > 0 && it.getStatus().equals(ClientStatus.BAD)) {
                 clients[k++] = it;
             }
@@ -230,5 +224,26 @@ public class AccountManager {
             sb.append(it).append('\n');
         }
         return sb.toString();
+    }
+
+    @Override
+    public Iterator<Client> iterator() {
+        return new ClientIterator();
+    }
+
+    private class ClientIterator implements Iterator<Client> {
+
+        private int count = 0;
+
+        @Override
+        public boolean hasNext() {
+            return count != size;
+        }
+
+        @Override
+        public Client next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return get(count++);
+        }
     }
 }

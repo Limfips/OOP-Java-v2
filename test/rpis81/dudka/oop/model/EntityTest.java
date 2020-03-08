@@ -111,4 +111,12 @@ public class EntityTest {
         }
         assertEquals(debBalance, entity.totalBalance(), 0.0);
     }
+
+    @Test
+    public void iteratorBLAD() {
+        int k = 0;
+        for (Account anIndividual : entity) {
+            assertEquals(anIndividual, source.clients[1].get(k++));
+        }
+    }
 }

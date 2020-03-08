@@ -2,7 +2,7 @@ package rpis81.dudka.oop.model;
 
 import java.time.LocalDate;
 
-public interface Account {
+public interface Account extends Comparable<Account> {
     String getNumber();
     void setNumber(String number);
     double getBalance();

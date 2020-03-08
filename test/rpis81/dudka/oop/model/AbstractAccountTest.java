@@ -65,4 +65,14 @@ public class AbstractAccountTest {
         account = getAccount();
         assertEquals(4, account.monthsQuantityBeforeExpiration());
     }
+
+    @Test
+    public void compareTo() {
+        AbstractAccount firstAbstractAccount = new AbstractAccount(source.testNumbers[0], source.expirationDate);
+        AbstractAccount secondAbstractAccount = new AbstractAccount(source.testNumbers[0], source.expirationDate);
+
+        firstAbstractAccount.setBalance(10);
+        secondAbstractAccount.setBalance(50);
+        assertTrue(firstAbstractAccount.compareTo(secondAbstractAccount) < 0);
+    }
 }

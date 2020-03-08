@@ -1,6 +1,7 @@
 package rpis81.dudka.oop.model;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -75,7 +76,7 @@ public class Entity implements Client, Cloneable {
         if (accountNumber == null) throw new NullPointerException();
         if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
 
-        Account resultAccount = null;
+        Account resultAccount;
             for (Node node = this.head.next; node != this.head; node = node.next) {
                 if (node.value.getNumber().equals(accountNumber)) {
                     resultAccount = node.value;
@@ -83,17 +84,6 @@ public class Entity implements Client, Cloneable {
                 }
             }
         throw new NoSuchElementException();
-    }
-
-    @Override
-    public boolean hasAccount(String accountNumber) {
-        if (accountNumber == null) throw new NullPointerException();
-        try {
-            get(accountNumber);
-            return true;
-        } catch (NoSuchElementException ex) {
-            return false;
-        }
     }
 
     @Override
@@ -137,15 +127,6 @@ public class Entity implements Client, Cloneable {
     }
 
     @Override
-    public double debtTotal() {
-        double debBalance = 0;
-        for (Account it : getCreditAccounts()) {
-            debBalance += it.getBalance();
-        }
-        return debBalance;
-    }
-
-    @Override
     public int size() {
         return size;
     }
@@ -158,30 +139,6 @@ public class Entity implements Client, Cloneable {
             accounts[index++] = node.value;
         }
         return accounts;
-    }
-
-    @Override
-    public Account[] sortedAccountsByBalance() {
-        Account[] accounts = getAccounts();
-        for (int i = size-1; i > 0; i--){
-            for (int j = 0; j < i; j++){
-                if( accounts[j].getBalance() > accounts[j+1].getBalance() ){
-                    Account tmp = accounts[j];
-                    accounts[j] = accounts[j+1];
-                    accounts[j+1] = tmp;
-                }
-            }
-        }
-        return accounts;
-    }
-
-    @Override
-    public double totalBalance() {
-        double totalBalance = 0;
-        for (Account account : getAccounts()) {
-            totalBalance += account.getBalance();
-        }
-        return totalBalance;
     }
 
     @Override
@@ -332,14 +289,7 @@ public class Entity implements Client, Cloneable {
         return this.size == 0;
     }
 
-    private boolean isDuplicateNumber(String accountNumber) {
-        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
-        return hasAccount(accountNumber);
-    }
 
-    private boolean isValidNumber(String accountNumber) {
-        return AbstractAccount.pattern.matcher(accountNumber).matches();
-    }
 
     private boolean checkIndex(int index) {
         return (index > -1 && index < this.size);
@@ -405,5 +355,33 @@ public class Entity implements Client, Cloneable {
         }
         sb.append("totalBalance").append(totalBalance());
         return sb.toString();
+    }
+
+    @Override
+    public Iterator<Account> iterator() {
+        return new AccountIterator();
+    }
+
+    @Override
+    public int compareTo(Client o) {
+        return (int) (this.totalBalance() - o.totalBalance());
+    }
+
+    private class AccountIterator implements Iterator<Account> {
+
+        private Node cursor = head.next;
+
+        @Override
+        public boolean hasNext() {
+            return cursor != head;
+        }
+
+        @Override
+        public Account next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            Account value = cursor.value;
+            cursor = cursor.next;
+            return value;
+        }
     }
 }

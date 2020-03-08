@@ -1,8 +1,10 @@
 package rpis81.dudka.oop.model;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class Individual implements Client, Cloneable {
 
@@ -59,7 +61,7 @@ public class Individual implements Client, Cloneable {
         if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
 
         //ToDo тут переделай
-        if (index > -1 && index < this.accounts.length){
+        if (index < this.accounts.length){
             if (size + 1 > this.accounts.length) {
                 increaseArray();
             }
@@ -81,11 +83,6 @@ public class Individual implements Client, Cloneable {
         return false;
     }
 
-    private boolean isDuplicateNumber(String accountNumber) {
-        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
-        return hasAccount(accountNumber);
-    }
-
     public Account get(int index) {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
 
@@ -95,42 +92,12 @@ public class Individual implements Client, Cloneable {
         throw new NoSuchElementException();
     }
 
-    public Account get(String accountNumber) {
-        if (accountNumber == null) throw new NullPointerException();
-        if (!isValidNumber(accountNumber)) throw new InvalidAccountNumberException();
-
-        Account account;
-            for (int i = 0; i < size; i++){
-                account = this.accounts[i];
-                if (account != null) {
-                    if (account.getNumber().equals(accountNumber)){
-                        return account;
-                    }
-                }
-            }
-        throw new NoSuchElementException();
-    }
-
-    private boolean isValidNumber(String accountNumber) {
-        return AbstractAccount.pattern.matcher(accountNumber).matches();
-    }
-
-    public boolean hasAccount(String accountNumber) {
-        if (accountNumber == null) throw new NullPointerException();
-        try {
-            get(accountNumber);
-            return true;
-        } catch (NoSuchElementException ex) {
-            return false;
-        }
-    }
-
     public Account set(int index, Account account) throws DublicateAccountNumberException {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
         if (account == null) throw new NullPointerException();
         if (isDuplicateNumber(account.getNumber())) throw new DublicateAccountNumberException();
 
-        if (index > -1 && index < size){
+        if (index < size){
             Account oldAccount = this.accounts[index];
             this.accounts[index] = account;
             return oldAccount;
@@ -140,7 +107,7 @@ public class Individual implements Client, Cloneable {
 
     public Account remove(int index) {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
-        if (index > -1 && index < size){
+        if (index < size){
             return toRemove(index);
         }
         throw new NoSuchElementException();
@@ -168,15 +135,6 @@ public class Individual implements Client, Cloneable {
         }
     }
 
-    @Override
-    public double debtTotal() {
-        double debBalance = 0;
-        for (Account it : getCreditAccounts()) {
-            debBalance += it.getBalance();
-        }
-        return debBalance;
-    }
-
 
     private Account toRemove(int index) {
         if (index < 0 || index > size) throw new IndexOutOfBoundsException();
@@ -195,28 +153,6 @@ public class Individual implements Client, Cloneable {
         Account[] newAccount = new Account[size];
         System.arraycopy(this.accounts, 0, newAccount, 0, size);
         return newAccount;
-    }
-
-    public Account[] sortedAccountsByBalance() {
-        Account[] accounts = getAccounts();
-        for (int i = size-1; i > 0; i--){
-            for (int j = 0; j < i; j++){
-                if( accounts[j].getBalance() > accounts[j+1].getBalance() ){
-                    Account tmp = accounts[j];
-                    accounts[j] = accounts[j+1];
-                    accounts[j+1] = tmp;
-                }
-            }
-        }
-        return accounts;
-    }
-
-    public double totalBalance() {
-        double totalBalance = 0;
-        for (Account account : getAccounts()) {
-            totalBalance += account.getBalance();
-        }
-        return totalBalance;
     }
 
     @Override
@@ -240,23 +176,6 @@ public class Individual implements Client, Cloneable {
         this.creditScores += creditScores;
     }
 
-    @Override
-    public Account[] getCreditAccounts() {
-        Account[] credits = new Account[size];
-        int j = 0;
-        for (int i = 0; i < size; i++) {
-            if (this.accounts[i] != null && this.accounts[i] instanceof Credit) {
-                credits[j++] = this.accounts[i];
-            }
-        }
-        Account[] result = new Account[j];
-        for (int i = 0, k = 0; i < size; i++) {
-            if (credits[i] != null) {
-                result[k++] = credits[i];
-            }
-        }
-        return result;
-    }
 
     public int indexOf(String accountNumber) {
         if (accountNumber == null) throw new NullPointerException();
@@ -322,5 +241,31 @@ public class Individual implements Client, Cloneable {
         return  Arrays.hashCode(accounts) ^
                 Objects.hash(name) ^ Objects.hash(size) ^
                 Objects.hash(creditScores);
+    }
+
+    @Override
+    public Iterator<Account> iterator() {
+        return new AccountIterator();
+    }
+
+    @Override
+    public int compareTo(Client o) {
+        return (int) (this.totalBalance() - o.totalBalance());
+    }
+
+    private class AccountIterator implements Iterator<Account> {
+
+        private int count = 0;
+
+        @Override
+        public boolean hasNext() {
+            return count != size;
+        }
+
+        @Override
+        public Account next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return get(count++);
+        }
     }
 }

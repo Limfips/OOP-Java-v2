@@ -113,4 +113,9 @@ public class AbstractAccount implements Account, Cloneable {
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+
+    @Override
+    public int compareTo(Account o) {
+        return ((int) (this.balance - o.getBalance()));
+    }
 }

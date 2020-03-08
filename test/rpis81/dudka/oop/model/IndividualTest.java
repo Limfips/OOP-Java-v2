@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import rpis81.dudka.oop.model.source.DataSource;
 
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 public class IndividualTest {
@@ -110,5 +112,13 @@ public class IndividualTest {
             debBalance += it.getBalance();
         }
         assertEquals(debBalance, individual.totalBalance(), 0.0);
+    }
+
+    @Test
+    public void iteratorBLAD() {
+        int k = 0;
+        for (Account anIndividual : individual) {
+            assertEquals(anIndividual, source.clients[0].get(k++));
+        }
     }
 }
